@@ -110,7 +110,11 @@ const EditForm = ({ data }: { data: form[] }) => {
             "Save"
           )}
         </Button>
-        <Button variant="outline" onClick={() => router.push("/seller")}>
+        <Button
+          variant="outline"
+          type="button"
+          onClick={() => router.push("/seller")}
+        >
           Cancal
         </Button>
       </form>
