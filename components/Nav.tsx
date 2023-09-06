@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import * as React from "react";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, LucideMenu } from "lucide-react";
 import { useTheme } from "next-themes";
 
 import { Button } from "@/components/ui/button";
@@ -15,17 +15,25 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetClose,
+} from "@/components/ui/sheet";
+
 import { NavigationMenuDemo } from "./ListItem";
 
 const Nav = () => {
   const path = usePathname();
   const { setTheme } = useTheme();
+  const [open, setOpen] = React.useState<boolean>(false);
   return (
     <div className="flex justify-between items-center border-b-2 px-10 py-4">
       <Link href={"/"}>
         <h1 className="font-bold text-3xl">Book Order</h1>
       </Link>
-      <ol className="flex justify-center items-center gap-10 text-black dark:text-gray-400">
+      <ol className="flex justify-center items-center gap-10 text-black dark:text-gray-400 max-sm:hidden">
         <Link
           href={"/"}
           className={`${
@@ -34,7 +42,7 @@ const Nav = () => {
         >
           <li>Customer page</li>
         </Link>
-        <NavigationMenuDemo />
+        <NavigationMenuDemo open={open} />
       </ol>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -56,6 +64,26 @@ const Nav = () => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetTrigger asChild className="sm:hidden">
+          <Button variant="outline">
+            <LucideMenu />
+          </Button>
+        </SheetTrigger>
+        <SheetContent>
+          <ol className="flex flex-col justify-start items-start gap-10 text-black dark:text-gray-400">
+            <Link
+              href={"/"}
+              className={`${
+                path === "/" && "dark:text-white font-bold text-xl"
+              }  dark:hover:text-gray-50`}
+            >
+              <li onClick={() => setOpen(false)}>Customer page</li>
+            </Link>
+            <NavigationMenuDemo open={open} />
+          </ol>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };

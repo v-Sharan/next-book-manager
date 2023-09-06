@@ -14,6 +14,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+import { SheetClose } from "./ui/sheet";
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -28,7 +29,7 @@ const components: { title: string; href: string; description: string }[] = [
   },
 ];
 
-export function NavigationMenuDemo() {
+export function NavigationMenuDemo({ open }: { open: boolean }) {
   const path = usePathname();
 
   return (
@@ -37,23 +38,37 @@ export function NavigationMenuDemo() {
         <NavigationMenuItem>
           <NavigationMenuTrigger
             className={`${
-              path.startsWith("/seller") && "dark:text-white font-bold"
-            }  dark:hover:text-gray-50`}
+              path.startsWith("/seller") && "dark:text-white font-bold text-xl"
+            }  dark:hover:text-gray-50 `}
           >
             Seller Page
           </NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
-              {components.map((component) => (
-                <ListItem
-                  key={component.title}
-                  title={component.title}
-                  href={component.href}
-                >
-                  {component.description}
-                </ListItem>
-              ))}
-            </ul>
+            {!open ? (
+              <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] max-sm:w-[250px] md:grid-cols-2 lg:w-[600px] ">
+                {components.map((component) => (
+                  <ListItem
+                    key={component.title}
+                    title={component.title}
+                    href={component.href}
+                  >
+                    {component.description}
+                  </ListItem>
+                ))}
+              </ul>
+            ) : (
+              <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] max-sm:w-[250px] md:grid-cols-2 lg:w-[600px] ">
+                {components.map((component) => (
+                  <ListItem
+                    key={component.title}
+                    title={component.title}
+                    href={component.href}
+                  >
+                    <SheetClose>{component.description}</SheetClose>
+                  </ListItem>
+                ))}
+              </ul>
+            )}
           </NavigationMenuContent>
         </NavigationMenuItem>
       </NavigationMenuList>

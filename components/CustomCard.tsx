@@ -78,7 +78,7 @@ const CustomCard = ({ book_name, image, available, bookid }: book) => {
   };
 
   return (
-    <Card className="max-h-[40rem] max-w-lg">
+    <Card className="max-h-[40rem] max-sm:max-w-sm max-w-lg">
       <CardHeader>
         <CardTitle>{book_name.slice(0, 30) + "..."}</CardTitle>
       </CardHeader>
@@ -108,7 +108,7 @@ const CustomCard = ({ book_name, image, available, bookid }: book) => {
           <AlertDialogTrigger asChild>
             <Button className="w-full">Buy Now</Button>
           </AlertDialogTrigger>
-          <AlertDialogContent className="sm:max-w-[425px]">
+          <AlertDialogContent className="sm:max-w-[425px] max-sm:w-[400px]">
             <AlertDialogHeader>
               <AlertDialogTitle className="font-bold text-3xl">
                 Your order summary

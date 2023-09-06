@@ -24,6 +24,10 @@ const TableComponent = ({ data }: { data: SoldBooks[] | book[] }) => {
     {
       accessorKey: "book_name",
       header: "Book Name",
+      cell: ({ row }) => {
+        const name: string = row.getValue("book_name");
+        return <p>{name.slice(0, 15) + "..."}</p>;
+      },
     },
     {
       accessorKey: "available",
@@ -94,7 +98,7 @@ const TableComponent = ({ data }: { data: SoldBooks[] | book[] }) => {
   ];
 
   return (
-    <div className="container mx-auto py-10 w-[725px]">
+    <div className="container flex items-center justify-center py-10 w-[725px] max-small:w-[550px]">
       <DataTable
         columns={path === "/seller" ? BooksColumn : column}
         data={data}
