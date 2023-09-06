@@ -2,7 +2,7 @@ import mysql from "mysql2/promise";
 
 import { QueryOptions } from "mysql2/promise";
 
-export async function query({ query, values = [] }: QueryOptions) {
+export async function query({ sql, values = [] }: QueryOptions) {
   const db = await mysql.createConnection({
     host: process.env.HOST,
     user: process.env.USER,
@@ -10,7 +10,7 @@ export async function query({ query, values = [] }: QueryOptions) {
     database: process.env.DATABASE,
   });
   try {
-    const [results] = await db.execute(query, values);
+    const [results] = await db.execute(sql, values);
     db.end();
     return results;
   } catch (error: any) {

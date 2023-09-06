@@ -10,10 +10,9 @@ import {
 } from "./ui/card";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-
+import { Loader2 } from "lucide-react";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -30,14 +29,15 @@ import { useToast } from "./ui/use-toast";
 
 import { BuyBooks } from "@/lib/actions/books";
 
-const CustomCard = ({ book_name, image, availability, bookid }: book) => {
+const CustomCard = ({ book_name, image, available, bookid }: book) => {
   const [quantity, setQuantity] = useState<number>(1);
   const [open, setOpen] = useState<boolean>(false);
+  const [buy, setBuy] = useState<boolean>(false);
   const { toast } = useToast();
   const path = usePathname();
 
   const handleIncrement = () => {
-    if (quantity === availability) {
+    if (quantity === available) {
       toast({
         title: "Number of books limit reached",
         action: (
@@ -64,8 +64,17 @@ const CustomCard = ({ book_name, image, availability, bookid }: book) => {
   };
 
   const handleConfirm = async () => {
+    setBuy(true);
     await BuyBooks({ bookid, quantity, path });
     setOpen(false);
+    toast({
+      title: "Purchase successfully",
+      description: `Thank you for buying ${book_name.slice(0, 10) + "..."}`,
+      action: (
+        <ToastAction altText="Goto schedule to undo">Dismiss</ToastAction>
+      ),
+    });
+    setBuy(false);
   };
 
   return (
@@ -83,10 +92,10 @@ const CustomCard = ({ book_name, image, availability, bookid }: book) => {
         />
         <p
           className={`${
-            availability === 0 ? "bg-red-600" : "bg-green-700"
+            available === 0 ? "bg-red-600" : "bg-green-700"
           } self-end text-white text-sm my-4 font-bold px-1.5 py-1 rounded-lg`}
         >
-          Available {availability}
+          Available {available}
         </p>
         <div className="flex flex-row gap-5 items-center">
           <Button onClick={handleIncrement}>+</Button>
@@ -119,8 +128,12 @@ const CustomCard = ({ book_name, image, availability, bookid }: book) => {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel className="w-full">Cancle</AlertDialogCancel>
-              <Button onClick={handleConfirm} className="w-full">
-                Confirm
+              <Button onClick={handleConfirm} disabled={buy} className="w-full">
+                {buy ? (
+                  <Loader2 color="#fff" className="mr-2 h-5 w-5 animate-spin" />
+                ) : (
+                  "Confirm"
+                )}
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>

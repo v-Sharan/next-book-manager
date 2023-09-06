@@ -15,13 +15,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import { NavigationMenuDemo } from "./ListItem";
+
 const Nav = () => {
   const path = usePathname();
   const { setTheme } = useTheme();
   return (
     <div className="flex justify-between items-center border-b-2 px-10 py-4">
-      <h1 className="font-bold text-3xl">Book Order</h1>
-      <ol className="flex gap-10 text-black dark:text-gray-400">
+      <Link href={"/"}>
+        <h1 className="font-bold text-3xl">Book Order</h1>
+      </Link>
+      <ol className="flex justify-center items-center gap-10 text-black dark:text-gray-400">
         <Link
           href={"/"}
           className={`${
@@ -30,14 +34,7 @@ const Nav = () => {
         >
           <li>Customer page</li>
         </Link>
-        <Link
-          href={"/seller"}
-          className={`${
-            path === "/seller" && "dark:text-white font-bold"
-          }  dark:hover:text-gray-50 `}
-        >
-          <li>Seller page</li>
-        </Link>
+        <NavigationMenuDemo />
       </ol>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>

@@ -1,5 +1,4 @@
 import { getBooks } from "@/lib/actions/books";
-import Image from "next/image";
 
 import { book } from "@/common.types";
 import CustomCard from "@/components/CustomCard";

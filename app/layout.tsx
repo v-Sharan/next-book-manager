@@ -20,10 +20,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+          <Toaster />
           <Nav />
           {children}
         </ThemeProvider>
-        <Toaster />
       </body>
     </html>
   );

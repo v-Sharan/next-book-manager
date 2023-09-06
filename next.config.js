@@ -9,6 +9,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "imageio.forbes.com",
       },
+      {
+        protocol: "https",
+        hostname: "d3i5mgdwi2ze58.cloudfront.net",
+      },
     ],
   },
 };
