@@ -103,7 +103,7 @@ const EditForm = ({ data }: { data: form[] }) => {
             </FormItem>
           )}
         />
-        <Button type="submit">
+        <Button disabled={loading} type="submit">
           {loading ? (
             <Loader2 color="#fff" className="mr-2 h-5 w-5 animate-spin" />
           ) : (
