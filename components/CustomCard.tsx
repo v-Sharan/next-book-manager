@@ -98,9 +98,9 @@ const CustomCard = ({ book_name, image, available, bookid }: book) => {
           Available {available}
         </p>
         <div className="flex flex-row gap-5 items-center">
-          <Button onClick={handleIncrement}>+</Button>
-          {quantity}
           <Button onClick={handleDecrement}>-</Button>
+          {quantity}
+          <Button onClick={handleIncrement}>+</Button>
         </div>
       </CardContent>
       <AlertDialog open={open} onOpenChange={setOpen}>
