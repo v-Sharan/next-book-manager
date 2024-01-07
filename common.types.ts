@@ -26,3 +26,15 @@ export type form = {
   image: string;
   bookid: number;
 };
+
+export type AllState = {
+  quantity: number;
+  isLoading: boolean;
+  price: number;
+};
+
+export type VerifyPayment = {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+};

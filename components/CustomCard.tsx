@@ -22,51 +22,86 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-import { book } from "@/common.types";
+import { book, AllState, VerifyPayment } from "@/common.types";
 import { Button } from "./ui/button";
 import { ToastAction } from "./ui/toast";
 import { useToast } from "./ui/use-toast";
 
 import { BuyBooks } from "@/lib/actions/books";
+import { IntitateOrder, verifyPayment } from "@/lib/actions/payment";
 
 const CustomCard = ({ book_name, image, available, bookid }: book) => {
-  const [quantity, setQuantity] = useState<number>(1);
   const [open, setOpen] = useState<boolean>(false);
-  const [buy, setBuy] = useState<boolean>(false);
   const { toast } = useToast();
   const path = usePathname();
+  const [allState, setAllState] = useState<AllState>({
+    quantity: 1,
+    isLoading: false,
+    price: 10,
+  });
 
   const handleIncrement = () => {
-    if (quantity === available) {
-      toast({
-        title: "Number of books limit reached",
-        action: (
-          <ToastAction altText="Goto schedule to undo">Dismiss</ToastAction>
-        ),
+    if (allState.quantity != available) {
+      setAllState((prev) => {
+        return {
+          ...prev,
+          quantity: prev.quantity + 1,
+          price: prev.price + 10,
+        };
       });
       return;
     }
-    setQuantity((prev) => prev + 1);
+
+    toast({
+      title: "Number of books limit reached",
+      action: (
+        <ToastAction altText="Goto schedule to undo">Dismiss</ToastAction>
+      ),
+    });
   };
 
   const handleDecrement = () => {
-    if (quantity === 1) {
+    if (allState.quantity != 1) {
+      setAllState((prev) => {
+        return {
+          ...prev,
+          quantity: prev.quantity - 1,
+          price: prev.price - 10,
+        };
+      });
+      return;
+    }
+    toast({
+      title: "Number of books atleast one",
+      description: "You can't buy less than one book",
+      action: (
+        <ToastAction altText="Goto schedule to undo">Dismiss</ToastAction>
+      ),
+    });
+  };
+
+  const handleCallBack = async ({
+    razorpay_order_id,
+    razorpay_payment_id,
+    razorpay_signature,
+  }: VerifyPayment) => {
+    const verify = await verifyPayment({
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+    });
+    if (!verify) {
       toast({
-        title: "Number of books atleast one",
-        description: "You can't buy less than one book",
+        title: "Failed to buy because of Transaction failed",
+        description: "Contact cutomer service",
         action: (
           <ToastAction altText="Goto schedule to undo">Dismiss</ToastAction>
         ),
       });
       return;
     }
-    setQuantity((prev) => prev - 1);
-  };
-
-  const handleConfirm = async () => {
-    setBuy(true);
-    await BuyBooks({ bookid, quantity, path });
-    setOpen(false);
+    setOpen(true);
+    await BuyBooks({ bookid, quantity: allState.quantity, path });
     toast({
       title: "Purchase successfully",
       description: `Thank you for buying ${book_name.slice(0, 10) + "..."}`,
@@ -74,7 +109,38 @@ const CustomCard = ({ book_name, image, available, bookid }: book) => {
         <ToastAction altText="Goto schedule to undo">Dismiss</ToastAction>
       ),
     });
-    setBuy(false);
+    setOpen(false);
+    setAllState((prev) => {
+      return { ...prev, isLoading: false };
+    });
+  };
+
+  const handleConfirm = async () => {
+    setAllState((prev) => {
+      return { ...prev, isLoading: true };
+    });
+    const { id } = await IntitateOrder({ amaount: allState.price });
+    var options = {
+      key: process.env.NEXT_PUBLIC_KEY_ID, // Enter the Key ID generated from the Dashboard
+      amount: allState.price, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+      currency: "INR",
+      name: "Book Application", //your business name
+      description: "Test Transaction",
+      image: "https://example.com/your_logo",
+      order_id: id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+      handler: (response: VerifyPayment) => handleCallBack(response),
+      prefill: {
+        name: "Sharan V",
+        email: "sampleGmail.com",
+        contact: "9999999999", //Provide the customer's phone number for better conversion rates
+      },
+      theme: {
+        color: "#000",
+      },
+    };
+    //@ts-ignore
+    var rzp1 = new window.Razorpay(options);
+    rzp1.open();
   };
 
   return (
@@ -99,9 +165,10 @@ const CustomCard = ({ book_name, image, available, bookid }: book) => {
         </p>
         <div className="flex flex-row gap-5 items-center">
           <Button onClick={handleDecrement}>-</Button>
-          {quantity}
+          {allState.quantity}
           <Button onClick={handleIncrement}>+</Button>
         </div>
+        <div>Price {allState.price}</div>
       </CardContent>
       <AlertDialog open={open} onOpenChange={setOpen}>
         <CardFooter className="flex justify-center items-center">
@@ -123,13 +190,17 @@ const CustomCard = ({ book_name, image, available, bookid }: book) => {
                 <span className="text-black dark:text-gray-100 font-bold">
                   No of books:{" "}
                 </span>
-                {quantity}
+                {allState.quantity}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel className="w-full">Cancle</AlertDialogCancel>
-              <Button onClick={handleConfirm} disabled={buy} className="w-full">
-                {buy ? (
+              <Button
+                onClick={handleConfirm}
+                disabled={allState.isLoading}
+                className="w-full"
+              >
+                {allState.isLoading ? (
                   <Loader2 color="#fff" className="mr-2 h-5 w-5 animate-spin" />
                 ) : (
                   "Confirm"

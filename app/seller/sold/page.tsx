@@ -1,7 +1,6 @@
 import React from "react";
 import TableComponent from "@/components/TableComponent";
 import { getSoldBooks } from "@/lib/actions/books";
-import { SoldBooks } from "@/common.types";
 
 const page = async () => {
   const sold_Books = await getSoldBooks();

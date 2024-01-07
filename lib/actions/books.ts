@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { BuyBook, book, form } from "@/common.types";
+import { BuyBook, book } from "@/common.types";
 import { query } from "../connect";
 
 export const BuyBooks = async ({ bookid, quantity, path }: BuyBook) => {

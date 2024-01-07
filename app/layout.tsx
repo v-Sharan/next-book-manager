@@ -5,6 +5,7 @@ import { Inter } from "next/font/google";
 import Nav from "@/components/Nav";
 import { Toaster } from "@/components/ui/toaster";
 const inter = Inter({ subsets: ["latin"] });
+import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "Customer Page",
@@ -18,6 +19,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <Toaster />
